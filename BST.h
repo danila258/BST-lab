@@ -1,11 +1,14 @@
 #ifndef BST_LAB_BST_H
 #define BST_LAB_BST_H
 
+#include <iostream>
+
 
 class BST {
 public:
     BST();
-    BST(int* array);
+    BST(int key);
+    BST(int* array, size_t size);
 
     ~BST();
 
@@ -22,8 +25,8 @@ public:
 
     void show() const;
 
-    int minValueNode(struct BstNode* node);
-    int maxValueNode(struct BstNode* node);
+    int minValueNode() const;
+    int maxValueNode() const;
 
 private:
     struct BstNode {
@@ -32,12 +35,11 @@ private:
         struct BstNode* right;
     };
 
-    BstNode* newNode(int item = 0);
+    BstNode* _root;
 
     struct BstNode* find(int key);
     void inorder(struct BstNode* root);
     void showNode(struct BstNode* node, int key) const;
 };
-
 
 #endif //BST_LAB_BST_H
