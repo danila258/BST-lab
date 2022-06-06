@@ -444,8 +444,9 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::fi
 // insert //-------------------------------------------------------------------------------
 
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::insert(const Key &key, const Value &value) {
-    if (_root == nullptr)
+void BinarySearchTree<Key, Value>::insert(const Key &key, const Value &value)
+{
+    if (!_root)
     {
         _root = new Node(key, value);
         ++_size;
