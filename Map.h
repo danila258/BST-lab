@@ -50,7 +50,7 @@ public:
 
 
 template<typename Key, typename Value>
-Map<Key, Value>::Map(const Map &other)
+Map<Key, Value>::Map(const Map& other)
 {
     *this = other;
 }
@@ -62,13 +62,13 @@ Map<Key, Value>& Map<Key, Value>::operator=(const Map& other)
 }
 
 template<typename Key, typename Value>
-Map<Key, Value>::Map(Map &&other) noexcept
+Map<Key, Value>::Map(Map&& other) noexcept
 {
     *this = std::move(other);
 }
 
 template<typename Key, typename Value>
-Map<Key, Value> &Map<Key, Value>::operator=(Map &&other) noexcept
+Map<Key, Value> &Map<Key, Value>::operator=(Map&& other) noexcept
 {
     _tree = std::move(other._tree);
 }
@@ -85,25 +85,25 @@ void Map<Key, Value>::insert(const Key& key, const Value& value)
 }
 
 template<typename Key, typename Value>
-void Map<Key, Value>::erase(const Key &key)
+void Map<Key, Value>::erase(const Key& key)
 {
     _tree.erase(key);
 }
 
 template<typename Key, typename Value>
-typename Map<Key, Value>::ConstMapIterator Map<Key, Value>::find(const Key &key) const
+typename Map<Key, Value>::ConstMapIterator Map<Key, Value>::find(const Key& key) const
 {
     return ConstMapIterator( _tree.find(key) );
 }
 
 template<typename Key, typename Value>
-typename Map<Key, Value>::MapIterator Map<Key, Value>::find(const Key &key)
+typename Map<Key, Value>::MapIterator Map<Key, Value>::find(const Key& key)
 {
     return MapIterator ( _tree.find(key) );
 }
 
 template<typename Key, typename Value>
-const Value &Map<Key, Value>::operator[](const Key &key) const
+const Value& Map<Key, Value>::operator[](const Key& key) const
 {
     if (_tree.find(key) == _tree.end())
     {
@@ -114,7 +114,7 @@ const Value &Map<Key, Value>::operator[](const Key &key) const
 }
 
 template<typename Key, typename Value>
-Value &Map<Key, Value>::operator[](const Key &key)
+Value& Map<Key, Value>::operator[](const Key& key)
 {
     if (_tree.find(key) == _tree.end())
     {
