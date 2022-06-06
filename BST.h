@@ -128,6 +128,15 @@ private:
 };
 
 
+// Node //-------------------------------------------------------------------------------
+
+template<typename Key, typename Value>
+BinarySearchTree<Key, Value>::Node::Node(Key key, Value value, BinarySearchTree::Node* parent,
+                                         BinarySearchTree::Node* left, BinarySearchTree::Node* right) :
+                                         keyValuePair(std::make_pair(key, value)), parent(parent), left(left),
+                                         right(right)
+{}
+
 // Iterator //-------------------------------------------------------------------------------
 
 template<typename Key, typename Value>
@@ -230,7 +239,6 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::It
         {
             _node = _node->parent;
         }
-
         _node = _node->parent;
     }
 
@@ -260,7 +268,8 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::en
 // ConstIterator //-------------------------------------------------------------------------------
 
 template<typename Key, typename Value>
-BinarySearchTree<Key, Value>::ConstIterator::ConstIterator(const Node* node) : _node(node) {}
+BinarySearchTree<Key, Value>::ConstIterator::ConstIterator(const Node* node) : _node(node)
+{}
 
 template<typename Key, typename Value>
 const std::pair<Key, Value>* BinarySearchTree<Key, Value>::ConstIterator::operator->() const
@@ -330,20 +339,13 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
     return ConstIterator(nullptr);
 }
 
-// constructor and operators //-------------------------------------------------------------------------------
+// operators //-------------------------------------------------------------------------------
 
 template<typename Key, typename Value>
 BinarySearchTree<Key, Value>::BinarySearchTree(const BinarySearchTree& other)
 {
     *this = other;
 }
-
-template<typename Key, typename Value>
-BinarySearchTree<Key, Value>::Node::Node(Key key, Value value, BinarySearchTree::Node* parent,
-                                         BinarySearchTree::Node* left, BinarySearchTree::Node* right) :
-                                         keyValuePair(std::make_pair(key, value)), parent(parent), left(left),
-                                         right(right)
-{}
 
 template<typename Key, typename Value>
 BinarySearchTree<Key, Value> &BinarySearchTree<Key, Value>::operator=(const BinarySearchTree& other)
