@@ -85,7 +85,7 @@ typename Set<Value>::SetIterator Set<Value>::find(const Value& key)
 template<typename Value>
 bool Set<Value>::contains(const Value& value) const
 {
-    return find(value) != ConstSetIterator(nullptr);
+    return find(value) != _map.cend();
 }
 
 
