@@ -125,8 +125,8 @@ private:
     size_t _size = 0;
     Node* _root = nullptr; //!< корневой узел дерева
 
-    Node* max() const;
-    Node* min() const;
+    Node* max(Node *node) const;
+    Node* min(Node *node) const;
 
     void clear(Node* node);
     void deleteNode(const Key& key, Node* node);
@@ -263,7 +263,7 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::It
 template<typename Key, typename Value>
 typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::begin()
 {
-    return Iterator(min());
+    return Iterator(min(_root));
 }
 
 template<typename Key, typename Value>
@@ -378,7 +378,7 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
 template<typename Key, typename Value>
 typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value>::cbegin() const
 {
-    return ConstIterator(min());
+    return ConstIterator(min(_root));
 }
 
 template<typename Key, typename Value>
@@ -551,7 +551,7 @@ BinarySearchTree<Key, Value>::equalRange(const Key& key)
         return std::make_pair(begin(), ++endIter);
     }
 
-    while (beginIter != begin() && beginIter->first == key)
+    while ( beginIter->first == key && beginIter != begin() )
     {
         --beginIter;
     }
@@ -576,7 +576,7 @@ BinarySearchTree<Key, Value>::equalRange(const Key& key) const
         return std::make_pair(cbegin(), ++endIter);
     }
 
-    while (beginIter != cbegin() && beginIter->first == key)
+    while ( beginIter->first == key && beginIter != cbegin() )
     {
         --beginIter;
     }
@@ -602,13 +602,12 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
 }
 
 template<typename Key, typename Value>
-typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min() const
+typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min(Node *node) const
 {
-    Node* curNode = _root;
+    Node* curNode = node;
 
-    while  (curNode->left != nullptr) {
+    while (curNode && curNode->left != NULL)
         curNode = curNode->left;
-    }
 
     return curNode;
 }
@@ -631,15 +630,20 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
 }
 
 template<typename Key, typename Value>
-typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::max() const
+typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::max(Node* node) const
 {
-    Node* curNode = _root;
-
-    while  (curNode->right != nullptr) {
-        curNode = curNode->right;
+    if (!node)
+    {
+        return nullptr;
     }
-
-    return curNode;
+    else if (!node->right)
+    {
+        return node;
+    }
+    else
+    {
+        return max(node->right);
+    }
 }
 
 template<typename Key, typename Value>
@@ -660,68 +664,47 @@ void BinarySearchTree<Key, Value>::erase(const Key& key)
 }
 
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::deleteNode(const Key& key, Node* node) {
-    Key thisKey = node->pair.first;
+void BinarySearchTree<Key, Value>::deleteNode(const Key& key, Node* root)
+{
+    if (root == NULL)
+        return;
 
-    if (!node)
+    if(root->pair.first > key)
     {
+        deleteNode(key, root->left);
         return;
     }
-    else if (key < thisKey)
-    {
-        deleteNode(key, node->left);
+    else if(root->pair.first < key){
+        deleteNode(key, root->right);
+        return;
     }
-    else if (key > thisKey)
-    {
-        deleteNode(key, node->right);
+
+    if (root->left == NULL) {
+        delete root;
+        return;
     }
-    else if (key == thisKey)
-    {
-        if (node->left == nullptr && node->right == nullptr)
-        {
-            if (node->parent->pair.first > node->pair.first)
-            {
-                node->parent->left = nullptr;
-            }
-            else
-            {
-                node->parent->right = nullptr;
-            }
+    else if (root->right == NULL) {
+        delete root;
+        return;
+    }
+    else {
+        Node* Parent = root;
+        Node *succ = root->right;
 
-            delete node;
-            --_size;
+        while (succ->left != NULL) {
+            Parent = succ;
+            succ = succ->left;
         }
-        else if (node->left && !node->right)
-        {
-            node->parent->left = node->left;
-            node->left->parent = node->parent;
 
-            delete node;
-            --_size;
-        }
-        else if (!node->left && node->right)
-        {
-            node->parent->right = node->right;
-            node->right->parent = node->parent;
-
-            delete node;
-            --_size;
-        }
+        if (Parent != root)
+            Parent->left = succ->right;
         else
-        {
-            Node* minNode = node->right;
+            Parent->right = succ->right;
 
-            while  (minNode->left != nullptr) {
-                minNode = minNode->left;
-            }
+        root->pair.first = succ->pair.first;
 
-            node->pair = std::make_pair(minNode->pair.first, minNode->pair.second);
-            node->right = minNode->right;
-            minNode = node;
-
-            delete minNode;
-            --_size;
-        }
+        delete succ;
+        return;
     }
 }
 
