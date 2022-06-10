@@ -92,6 +92,7 @@ public:
 
     // вставить элемент с ключем key и значением value
     void insert(const Key& key, const Value& value);
+    void insert(const Key& key, const Value& value, Node* curNode);
 
     // удалить все элементы с ключем key
     void erase(const Key& key);
@@ -219,7 +220,7 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::It
 {
     Iterator elem = *this;
     ++(*this);
-    return Iterator(elem);
+    return elem;
 }
 
 template<typename Key, typename Value>
@@ -436,13 +437,13 @@ BinarySearchTree<Key, Value>::~BinarySearchTree()
 }
 
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::clear(Node *CurNode)
+void BinarySearchTree<Key, Value>::clear(Node *node)
 {
-    if (CurNode)
+    if (node)
     {
-        clear(CurNode->left);
-        clear(CurNode->right);
-        delete CurNode;
+        clear(node->left);
+        clear(node->right);
+        delete node;
     }
 }
 
@@ -457,20 +458,10 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
     {
         if (node->pair.first > key)
         {
-            if (node->left == nullptr)
-            {
-                return ConstIterator(nullptr);
-            }
-
             node = node->left;
         }
         else if (node->pair.first < key)
         {
-            if (node->right == nullptr)
-            {
-                return ConstIterator(nullptr);
-            }
-
             node = node->right;
         }
         else
@@ -491,20 +482,10 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::fi
     {
         if (node->pair.first > key)
         {
-            if (node->left == nullptr)
-            {
-                return Iterator(nullptr);
-            }
-
             node = node->left;
         }
         else if (node->pair.first < key)
         {
-            if (node->right == nullptr)
-            {
-                return Iterator(nullptr);
-            }
-
             node = node->right;
         }
         else
@@ -519,42 +500,36 @@ typename BinarySearchTree<Key, Value>::Iterator BinarySearchTree<Key, Value>::fi
 // insert //-------------------------------------------------------------------------------
 
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::insert(const Key& key, const Value& value)
-{
+void BinarySearchTree<Key, Value>::insert(const Key& key, const Value& value) {
     if (!_root)
     {
-        _root = new Node(key, value);
+        _root = new Node(key, value, _root, nullptr, nullptr);
+
         ++_size;
         return;
     }
 
-    Node* curNode = _root;
-    Key curKey = curNode->pair.first;
+    insert(key, value, _root);
+}
 
-    while ( (curKey >= key && curNode->left != nullptr) || (curKey < key && curNode->right != nullptr) )
+template<typename Key, typename Value>
+void BinarySearchTree<Key, Value>::insert(const Key& key, const Value& value, Node* curNode) {
+    if (curNode->pair.first >= key)
     {
-        if (curKey >= key)
-        {
-            curNode = curNode->left;
+        if (!curNode->left) {
+            curNode->left = new Node(key, value, curNode);
+            return;
         }
-        else
-        {
-            curNode = curNode->right;
-        }
-
-        curKey = curNode->pair.first;
-    }
-
-    if (curKey >= key)
-    {
-        curNode->left = new Node(key, value, curNode);
+        insert(key, value, curNode->left);
     }
     else
     {
-        curNode->right = new Node(key, value, curNode);
+        if (!curNode->right) {
+            curNode->right = new Node(key, value, curNode);
+            return;
+        }
+        insert(key, value, curNode->right);
     }
-
-    ++_size;
 }
 
 // equalRange, max, min, size //-------------------------------------------------------------------------------
@@ -742,7 +717,7 @@ void BinarySearchTree<Key, Value>::deleteNode(const Key& key, Node* node) {
 
             node->pair = std::make_pair(minNode->pair.first, minNode->pair.second);
             node->right = minNode->right;
-            minNode->right->parent = node;
+            minNode = node;
 
             delete minNode;
             --_size;
