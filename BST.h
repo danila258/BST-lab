@@ -125,13 +125,11 @@ private:
     size_t _size = 0;
     Node* _root = nullptr; //!< корневой узел дерева
 
-    Node* max(Node *node) const;
-    Key min(Node *node) const;
+    Key minVal(Node *node) const;
+    Node* min(Node *node) const;
 
     void clear(Node* node);
     Node* deleteNode(const Key& key, Node* root);
-
-
 };
 
 
@@ -602,25 +600,32 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
     return min;
 }
 
-template<typename Key, typename Value>
-Key BinarySearchTree<Key, Value>::min(Node *node) const
-{
-//    Node* curNode = node;
-//
-//    while (curNode && curNode->left != NULL)
-//    {
-//        curNode = curNode->left;
-//    }
-//
-//    return curNode;
 
-    Key minval = node->pair.first;
-    //find minval
-    while (node->left != nullptr)  {
-        minval = node->left->pair.first;
+template<typename Key, typename Value>
+typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min(Node *node) const
+{
+    Node* curNode = node;
+
+    while (curNode && curNode->left != NULL)
+    {
+        curNode = curNode->left;
+    }
+
+    return curNode;
+}
+
+template<typename Key, typename Value>
+Key BinarySearchTree<Key, Value>::minVal(Node *node) const
+{
+    Key minVal = node->pair.first;
+
+    while (node->left != nullptr)
+    {
+        minVal = node->left->pair.first;
         node = node->left;
     }
-    return minval;
+
+    return minVal;
 }
 
 template<typename Key, typename Value>
@@ -641,19 +646,6 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
 }
 
 template<typename Key, typename Value>
-typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::max(Node* node) const
-{
-    Node* curNode = node;
-
-    while (curNode && curNode->right != NULL)
-    {
-        curNode = curNode->right;
-    }
-
-    return curNode;
-}
-
-template<typename Key, typename Value>
 std::size_t BinarySearchTree<Key, Value>::size() const
 {
     return _size;
@@ -666,39 +658,39 @@ void BinarySearchTree<Key, Value>::erase(const Key& key)
 {
     _root = deleteNode(key, _root);
     --_size;
-//    while (find(key) != Iterator(nullptr))
-//    {
-//        deleteNode(key, _root);
-//    }
 }
 
 template<typename Key, typename Value>
 typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::deleteNode(const Key& key, Node* root)
 {
-    Node* parent = NULL;
-    Node* cur = root;
+    if (root == nullptr)
+    {
+        return root;
+    }
 
-    if (root == nullptr)  return root;
-
-    //traverse the tree
-    if (key < root->pair.first)     //traverse left subtree
+    if (key < root->pair.first)
+    {
         root->left = deleteNode(key, root->left);
-    else if (key > root->pair.first)  //traverse right subtree
+    }
+    else if (key > root->pair.first)
+    {
         root->right = deleteNode(key, root->right);
-    else  {
-        // node contains only one child
+    }
+    else
+    {
         if (root->left == nullptr)
+        {
             return root->right;
+        }
         else if (root->right == nullptr)
+        {
             return root->left;
+        }
 
-        // node has two children;
-        //get inorder successor (min value in the right subtree)
-        root->pair.first = min(root->right);
-
-        // Delete the inorder successor
+        root->pair.first = minVal(root->right);
         root->right = deleteNode(root->pair.first, root->right);
     }
+
     return root;
 }
 
