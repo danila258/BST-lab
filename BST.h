@@ -126,10 +126,10 @@ private:
     Node* _root = nullptr; //!< корневой узел дерева
 
     Node* max(Node *node) const;
-    Node* min(Node *node) const;
+    Key min(Node *node) const;
 
     void clear(Node* node);
-    void deleteNode(const Key& key, Node* node);
+    Node* deleteNode(const Key& key, Node* root);
 
 
 };
@@ -603,16 +603,24 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
 }
 
 template<typename Key, typename Value>
-typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min(Node *node) const
+Key BinarySearchTree<Key, Value>::min(Node *node) const
 {
-    Node* curNode = node;
+//    Node* curNode = node;
+//
+//    while (curNode && curNode->left != NULL)
+//    {
+//        curNode = curNode->left;
+//    }
+//
+//    return curNode;
 
-    while (curNode && curNode->left != NULL)
-    {
-        curNode = curNode->left;
+    Key minval = node->pair.first;
+    //find minval
+    while (node->left != nullptr)  {
+        minval = node->left->pair.first;
+        node = node->left;
     }
-
-    return curNode;
+    return minval;
 }
 
 template<typename Key, typename Value>
@@ -656,84 +664,42 @@ std::size_t BinarySearchTree<Key, Value>::size() const
 template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::erase(const Key& key)
 {
-    while (find(key) != Iterator(nullptr))
-    {
-        deleteNode(key, _root);
-    }
+    _root = deleteNode(key, _root);
+    --_size;
+//    while (find(key) != Iterator(nullptr))
+//    {
+//        deleteNode(key, _root);
+//    }
 }
 
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::deleteNode(const Key& key, Node* node)
+typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::deleteNode(const Key& key, Node* root)
 {
-    Node* cur = node;
+    Node* parent = NULL;
+    Node* cur = root;
 
-    while (cur) {
-        if (key > node->pair.first)
-        {
-            cur = node->right;
-        }
-        else if (key < node->pair.first)
-        {
-            cur = node->left;
-        }
-        else
-        {
-            break;
-        }
+    if (root == nullptr)  return root;
+
+    //traverse the tree
+    if (key < root->pair.first)     //traverse left subtree
+        root->left = deleteNode(key, root->left);
+    else if (key > root->pair.first)  //traverse right subtree
+        root->right = deleteNode(key, root->right);
+    else  {
+        // node contains only one child
+        if (root->left == nullptr)
+            return root->right;
+        else if (root->right == nullptr)
+            return root->left;
+
+        // node has two children;
+        //get inorder successor (min value in the right subtree)
+        root->pair.first = min(root->right);
+
+        // Delete the inorder successor
+        root->right = deleteNode(root->pair.first, root->right);
     }
-
-    if (!cur)
-        return;
-    else
-    {
-        if (!node->left && !node->right)
-        {
-            if (node->parent->pair.first > node->pair.first)
-            {
-                node->parent->left = nullptr;
-            }
-            else
-            {
-                node->parent->right = nullptr;
-            }
-
-            delete node;
-            --_size;
-        }
-        else if (!node->right)
-        {
-            node->parent->left = node->left;
-            node->left->parent = node->parent;
-            delete node;
-            --_size;
-        }
-        else if (!node->left && node->right)
-        {
-            node->parent->right = node->right;
-            node->right->parent = node->parent;
-            delete node;
-            --_size;
-        }
-        else
-        {
-            Node* maxNode = max(node->left);
-
-            if (maxNode->parent->pair.first <= maxNode->pair.first)
-            {
-                maxNode->parent->right = maxNode->left;
-            }
-            else
-            {
-                maxNode->parent->left = maxNode->left;
-            }
-            maxNode->left->parent = maxNode->parent;
-
-            node->pair = maxNode->pair;
-
-            delete maxNode;
-            --_size;
-        }
-    }
+    return root;
 }
 
 
