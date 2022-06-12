@@ -109,7 +109,6 @@ const Value& Map<Key, Value>::operator[](const Key& key) const
     {
         insert(key, Value());
     }
-
     return _tree.find(key)->second;
 }
 

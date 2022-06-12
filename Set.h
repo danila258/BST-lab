@@ -41,7 +41,7 @@ Set<Value>::Set(const Set& other)
 }
 
 template<typename Value>
-Set<Value> &Set<Value>::operator=(const Set& other)
+Set<Value>& Set<Value>::operator=(const Set& other)
 {
     _map = other._map;
 }
@@ -53,7 +53,7 @@ Set<Value>::Set(Set&& other) noexcept
 }
 
 template<typename Value>
-Set<Value> &Set<Value>::operator=(Set&& other) noexcept
+Set<Value>& Set<Value>::operator=(Set&& other) noexcept
 {
     _map = std::move(other._map);
 }
