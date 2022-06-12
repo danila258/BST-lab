@@ -3,6 +3,8 @@
 
 #include "BST.h"
 
+#include <stdexcept>
+
 
 template <typename Key, typename Value>
 class Map
@@ -105,10 +107,18 @@ typename Map<Key, Value>::MapIterator Map<Key, Value>::find(const Key& key)
 template<typename Key, typename Value>
 const Value& Map<Key, Value>::operator[](const Key& key) const
 {
-    if (_tree.find(key) == _tree.end())
+    int mSize = _tree.size();
+
+    if (find(key) == end())
     {
         insert(key, Value());
     }
+
+    if (mSize != _tree.size())
+    {
+        throw std::out_of_range("");
+    }
+
     return _tree.find(key)->second;
 }
 
