@@ -396,10 +396,12 @@ BinarySearchTree<Key, Value>::BinarySearchTree(const BinarySearchTree& other)
 template<typename Key, typename Value>
 BinarySearchTree<Key, Value> &BinarySearchTree<Key, Value>::operator=(const BinarySearchTree& other)
 {
-    if (this != other)
-    {
-        BinarySearchTree BSTcopy(other);
-        *this = std::move(BSTcopy);
+    if (*this != other) {
+        clear(_root);
+
+        for (ConstIterator iterator = other.cbegin(); iterator != other.cend(); ++iterator) {
+            this->insert(*iterator->first, *iterator->second);
+        }
     }
 
     return *this;
