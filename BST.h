@@ -416,9 +416,7 @@ BinarySearchTree<Key, Value> &BinarySearchTree<Key, Value>::operator=(BinarySear
 {
     if (this != other)
     {
-        delete _root;
-        _root = nullptr;
-        _size = 0;
+        clear(_root);
         std::swap(_root, other._root);
         std::swap(_size, other._size);
     }
