@@ -602,7 +602,7 @@ typename BinarySearchTree<Key, Value>::ConstIterator BinarySearchTree<Key, Value
 
 
 template<typename Key, typename Value>
-typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min(Node *node) const
+typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min(Node* node) const
 {
     Node* curNode = node;
 
@@ -615,7 +615,7 @@ typename BinarySearchTree<Key, Value>::Node* BinarySearchTree<Key, Value>::min(N
 }
 
 template<typename Key, typename Value>
-Key BinarySearchTree<Key, Value>::minVal(Node *node) const
+Key BinarySearchTree<Key, Value>::minVal(Node* node) const
 {
     Key minVal = node->pair.first;
 
