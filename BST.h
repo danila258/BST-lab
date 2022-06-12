@@ -145,7 +145,7 @@ BinarySearchTree<Key, Value>::Node::Node(Key key, Value value, BinarySearchTree:
 // Iterator //-------------------------------------------------------------------------------
 
 template<typename Key, typename Value>
-BinarySearchTree<Key, Value>::Iterator::Iterator(Node *node) : _node(node)
+BinarySearchTree<Key, Value>::Iterator::Iterator(Node* node) : _node(node)
 {}
 
 template<typename Key, typename Value>
