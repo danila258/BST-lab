@@ -394,7 +394,7 @@ BinarySearchTree<Key, Value>::BinarySearchTree(const BinarySearchTree& other)
 }
 
 template<typename Key, typename Value>
-BinarySearchTree<Key, Value> &BinarySearchTree<Key, Value>::operator=(const BinarySearchTree& other)
+BinarySearchTree<Key, Value>& BinarySearchTree<Key, Value>::operator=(const BinarySearchTree& other)
 {
     if (*this != other) {
         clear(_root);
@@ -414,7 +414,7 @@ BinarySearchTree<Key, Value>::BinarySearchTree(BinarySearchTree&& other) noexcep
 }
 
 template<typename Key, typename Value>
-BinarySearchTree<Key, Value> &BinarySearchTree<Key, Value>::operator=(BinarySearchTree&& other) noexcept
+BinarySearchTree<Key, Value>& BinarySearchTree<Key, Value>::operator=(BinarySearchTree&& other) noexcept
 {
     if (this != other)
     {
@@ -435,7 +435,7 @@ BinarySearchTree<Key, Value>::~BinarySearchTree()
 }
 
 template<typename Key, typename Value>
-void BinarySearchTree<Key, Value>::clear(Node *node)
+void BinarySearchTree<Key, Value>::clear(Node* node)
 {
     if (node)
     {
